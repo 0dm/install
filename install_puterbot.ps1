@@ -1,7 +1,5 @@
 # PowerShell script to pull puterbot and install
 
-Push-Location
-
 # Run a command and ensure it did not fail
 function RunAndCheck {
     Param
@@ -13,7 +11,6 @@ function RunAndCheck {
     Invoke-Expression $Command
     if ($LastExitCode) {
         Write-Output "Failed: $Desc : $LastExitCode"
-        Pop-Location
         exit
     }
 
@@ -31,5 +28,3 @@ RunAndCheck "pip install -r requirements.txt" "pip install -r requirements.txt"
 RunAndCheck "pip install -e ." "pip install -e ."
 RunAndCheck "alembic upgrade head" "alembic upgrade head"
 RunAndCheck "pytest" "run puterbot tests"
-
-Pop-Location
