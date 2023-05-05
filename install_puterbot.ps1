@@ -25,7 +25,7 @@ RunAndCheck "git clone https://github.com/MLDSAI/puterbot.git" "clone git repo"
 Set-Location .\puterbot
 
 RunAndCheck "python -m venv .venv" "create python virtual environment"
-RunAndCheck "$PSScriptRoot\puterbot\.venv\Scripts\Activate.ps1" "enable python virtual environment"
+RunAndCheck ".venv\Scripts\Activate.ps1" "enable python virtual environment"
 RunAndCheck "pip install wheel" "pip install wheel"
 RunAndCheck "pip install -r requirements.txt" "pip install -r requirements.txt"
 RunAndCheck "pip install -e ." "pip install -e ."
