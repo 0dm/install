@@ -1,25 +1,30 @@
 #!/bin/bash
+set -e
 
 # Run a command and ensure it did not fail
 RunAndCheck() {
-    res = $($1)
+    res=$($1)
 
-    if [ $res != 0 ]; then
+    if [[ -z $res ]] || [[ $res == 0 ]]; then
+        echo "Success: $2 : $res"
+    else
         echo "Failed: $2 : $res"
         exit 1
-    else
-        echo "Success: $2 : $res"
     fi
 }
-
+[ -d "puterbot" ] && mv puterbot puterbot-$(date +%Y-%m-%d_%H-%M-%S)
 RunAndCheck "git clone https://github.com/MLDSAI/puterbot.git" "clone git repo"
 
 cd puterbot
 
-RunAndCheck "python -m venv .venv" "create python virtual environment"
-RunAndCheck "source .venv/bin/activate" "enable python virtual environment"
-RunAndCheck "pip install wheel" "pip install wheel"
-RunAndCheck "pip install -r requirements.txt" "pip install -r requirements.txt"
-RunAndCheck "pip install -e ." "pip install -e ."
-RunAndCheck "alembic upgrade head" "alembic upgrade head"
-RunAndCheck "pytest" "run puterbot tests"
+RunAndCheck "python3.10 -m venv .venv" "create python virtual environment"
+source .venv/bin/activate
+pip install wheel
+
+# the following line generates a warning:
+#   Ignoring pywin32: markers 'sys_platform == "win32"' don't match your environment
+pip install -r requirements.txt
+
+RunAndCheck "pip install -e ."
+RunAndCheck "alembic upgrade head"
+RunAndCheck "pytest"
