@@ -25,6 +25,9 @@ pip install wheel
 #   Ignoring pywin32: markers 'sys_platform == "win32"' don't match your environment
 pip install -r requirements.txt
 
-RunAndCheck "pip install -e ."
+# the following line generates a warning:
+#   [notice] To update, run: pip install --upgrade pip
+pip install -e .
+
 RunAndCheck "alembic upgrade head"
 RunAndCheck "pytest"
