@@ -10,6 +10,10 @@ $gitInstaller = "Git-2.40.1-64-bit.exe"
 $gitInstallerLoc = "https://github.com/git-for-windows/git/releases/download/v2.40.1.windows.1/Git-2.40.1-64-bit.exe"
 $gitUninstaller = "C:\Program Files\Git\unins000.exe"
 
+$VCRedistInstaller = "vc_redist.x64.exe"
+$VCRedistInstallerLoc = "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+$VCRedistRegPath = "HKLM:\SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64"
+
 # Return true if a command/exe is available
 function CheckCMDExists() {
     Param
@@ -125,6 +129,33 @@ if (!$gitExists) {
     if (!$gitExists) {
         Write-Host "Error after installing git. Uninstalling, click 'Yes' if prompted for permission"
         Start-Process -FilePath $gitUninstaller -Verb runAs -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait
+        exit
+    }
+}
+
+# Check if Visual C++ Redist is installed
+# Note: Temporarily setting $ErrorActionPreference as -erroraction 'silentlycontinue' doesn't prevent non-terminating error with Get-ItemPropertyValue
+$ErrorActionPreference="SilentlyContinue"
+$vcredistExists = Get-ItemPropertyValue -Path $VCRedistRegPath -erroraction 'silentlycontinue' -Name Installed
+$ErrorActionPreference="Continue"
+
+if (!$vcredistExists) {
+    # Install Visual C++ Redist
+    Write-Host "Downloading Visual C++ Redist"
+    $ProgressPreference = 'SilentlyContinue'
+    Invoke-WebRequest -Uri $VCRedistInstallerLoc -OutFile $VCRedistInstaller
+    $exists = Test-Path -Path $VCRedistInstaller -PathType Leaf
+    if(!$exists) {
+        Write-Host "Failed to download Visual C++ installer"
+        exit
+    }
+
+    Write-Host "Installing Visual C++ Redist, click 'Yes' if prompted for permission"
+    Start-Process -FilePath $VCRedistInstaller -Verb runAs -ArgumentList "/install /q /norestart" -Wait
+    Remove-Item $VCRedistInstaller
+
+    if($LastExitCode) {
+        "Failed to install Visual C++ Redist: $LastExitCode"
         exit
     }
 }
