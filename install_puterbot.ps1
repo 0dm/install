@@ -160,7 +160,7 @@ if (!$vcredistExists) {
     }
 }
 
-RunAndCheck "git clone https://github.com/MLDSAI/puterbot.git" "clone git repo"
+RunAndCheck "git clone -q https://github.com/MLDSAI/puterbot.git" "clone git repo"
 
 Set-Location .\puterbot
 
