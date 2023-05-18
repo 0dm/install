@@ -1,4 +1,4 @@
-# PowerShell script to pull puterbot and install
+# PowerShell script to pull OpenAdapt and install
 
 # Change these if a different version of is required
 $pythonCmd = "python3.10"
@@ -74,16 +74,16 @@ function GetPythonCMD() {
     Start-Process -FilePath $pythonInstaller -Verb runAs -ArgumentList '/quiet','/uninstall' -Wait
     Remove-Item $pythonInstaller
 
-    # Stop puterbot install
+    # Stop OpenAdapt install
     Cleanup
     exit
 }
 
 function Cleanup {
-    $exists = Test-Path -Path "..\puterbot"
+    $exists = Test-Path -Path "..\OpenAdapt"
     if($exists) {
         Set-Location ..\
-        Remove-Item -LiteralPath "puterbot" -Force -Recurse
+        Remove-Item -LiteralPath "OpenAdapt" -Force -Recurse
     }
 }
 
@@ -160,9 +160,9 @@ if (!$vcredistExists) {
     }
 }
 
-RunAndCheck "git clone -q https://github.com/MLDSAI/puterbot.git" "clone git repo"
+RunAndCheck "git clone -q https://github.com/MLDSAI/OpenAdapt.git" "clone git repo"
 
-Set-Location .\puterbot
+Set-Location .\OpenAdapt
 
 $python = GetPythonCMD
 
@@ -172,4 +172,4 @@ RunAndCheck "pip install wheel" "pip install wheel"
 RunAndCheck "pip install -r requirements.txt" "pip install -r requirements.txt"
 RunAndCheck "pip install -e ." "pip install -e ."
 RunAndCheck "alembic upgrade head" "alembic upgrade head"
-RunAndCheck "pytest" "run puterbot tests"
+RunAndCheck "pytest" "run openadapt tests"
