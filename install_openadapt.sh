@@ -30,4 +30,5 @@ pip install -r requirements.txt
 pip install -e .
 
 RunAndCheck "alembic upgrade head"
+RunAndCheck "python3.10 -m spacy download en_core_web_lg"
 RunAndCheck "pytest"
